@@ -150,8 +150,6 @@ bool check()
 
     return 3 == b.size() && 0 == a.count( "Cobol" ) && 1 == b.count( "Haskell" ) && 1 == s.count( 1 );
   }
-
-  std::cout << "HENLOO" << std::endl;
   return false;
 }
 

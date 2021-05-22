@@ -14,101 +14,113 @@
 #include <functional>
 #include <iterator>
 
-template <class TYPE, class PREDICATE, class Comp = std::less<TYPE>, class Compp = std::less<TYPE>>
+template <class TYPE, class PREDICATE, 
+          class MSET_COMP_FST = std::less<TYPE>, class MSET_COMP_SND = std::less<TYPE> >
+
 class multisets_predicate_view
 {
   private:
 
-    std::multiset<TYPE, Comp>* _original_elements_first;
-    std::multiset<TYPE, Compp>* _original_elements_second;
+    std::multiset<TYPE, MSET_COMP_FST>* _original_address_first_mset;
+    std::multiset<TYPE, MSET_COMP_SND>* _original_address_second_mset;
 
-    std::multiset<TYPE, Comp> _a;
-    std::multiset<TYPE, Compp> _b;
+    std::multiset<TYPE, MSET_COMP_FST> _original_values_first_mset;
+    std::multiset<TYPE, MSET_COMP_SND> _original_values_second_mset;
 
-    std::multiset<TYPE, Compp> _ta;
-    std::multiset<TYPE, Compp> _tb;
+    std::multiset<TYPE, MSET_COMP_FST> _valid_elements;
+    std::multiset<TYPE, MSET_COMP_SND> _invalid_elements;
 
     PREDICATE _predicate;
 
   public:
 
-    multisets_predicate_view( std::multiset<TYPE, Comp>& m1, std::multiset<TYPE, Compp>& m2)
+    multisets_predicate_view(std::multiset<TYPE, MSET_COMP_FST>& first_input_mset,
+                             std::multiset<TYPE, MSET_COMP_SND>& second_input_mset)
     {
-      _original_elements_first = &m1;
-      _original_elements_second = &m2;
+      _original_address_first_mset = &first_input_mset;
+      _original_address_second_mset = &second_input_mset;
 
-      for (TYPE element : m1) {
-        _a.insert(element);
-        if ( !_predicate(element)) {
-          _tb.insert(element);
-        }
-        else {
-          _ta.insert(element);
-        }
+      for (TYPE element : first_input_mset)
+      {
+        _original_values_first_mset.insert(element);
+
+        if ( !_predicate(element))
+          _invalid_elements.insert(element);
+        else
+          _valid_elements.insert(element);
       }
 
-      for (TYPE element : m2) {
-        _b.insert(element);
-        if (_predicate(element)) {
-          _ta.insert(element);
-        }
-        else {
-          _tb.insert(element);
-        }
+      for (TYPE element : second_input_mset)
+      {
+        _original_values_second_mset.insert(element);
+
+        if (_predicate(element))
+          _valid_elements.insert(element);
+
+        else
+          _invalid_elements.insert(element);
       }
-      m1.clear();
-      m2.clear();
-      std::copy(_ta.begin(), _ta.end(), std::inserter(m1, m1.begin()));
-      std::copy(_tb.begin(), _tb.end(), std::inserter(m2, m2.begin()));
+
+      first_input_mset.clear();
+      second_input_mset.clear();
+
+      std::copy(_valid_elements.begin(), _valid_elements.end(),
+                std::inserter(first_input_mset, first_input_mset.begin()));
+
+      std::copy(_invalid_elements.begin(), _invalid_elements.end(),
+                std::inserter(second_input_mset, second_input_mset.begin()));
     }
 
-    multisets_predicate_view(std::multiset<TYPE, Comp>& m1, std::multiset<TYPE, Compp>& m2, PREDICATE p) : _predicate(p)
+    multisets_predicate_view(std::multiset<TYPE, MSET_COMP_FST>& first_input_mset,
+                             std::multiset<TYPE, MSET_COMP_SND>& second_input_mset, PREDICATE p) : _predicate(p)
     {
-      _original_elements_first = &m1;
-      _original_elements_second = &m2;
+      _original_address_first_mset = &first_input_mset;
+      _original_address_second_mset = &second_input_mset;
 
-      for (TYPE element : m1) {
-        _a.insert(element);
-        if ( !_predicate(element)) {
-          _tb.insert(element);
-        }
-        else {
-          _ta.insert(element);
-        }
+      for (TYPE element : first_input_mset) 
+      {
+        _original_values_first_mset.insert(element);
+
+        if ( !_predicate(element))
+          _invalid_elements.insert(element);
+        else
+          _valid_elements.insert(element);
       }
 
-      for (TYPE element : m2) {
-        _b.insert(element);
-        if (_predicate(element)) {
-          _ta.insert(element);
-        }
-        else {
-          _tb.insert(element);
-        }
+      for (TYPE element : second_input_mset) 
+      {
+        _original_values_second_mset.insert(element);
+
+        if (_predicate(element)) 
+          _valid_elements.insert(element);
+        else
+          _invalid_elements.insert(element);
       }
 
-      m1.clear();
-      m2.clear();
+      first_input_mset.clear();
+      second_input_mset.clear();
 
-      std::copy(_ta.begin(), _ta.end(), std::inserter(m1, m1.begin()));
-      std::copy(_tb.begin(), _tb.end(), std::inserter(m2, m2.begin()));
+      std::copy(_valid_elements.begin(), _valid_elements.end(),
+                std::inserter(first_input_mset, first_input_mset.begin()));
+      std::copy(_invalid_elements.begin(), _invalid_elements.end(),
+                std::inserter(second_input_mset, second_input_mset.begin()));
 
     }
     ~multisets_predicate_view()
     {
-      *_original_elements_first = _a;
-      *_original_elements_second = _b;
+      *_original_address_first_mset = _original_values_first_mset;
+      *_original_address_second_mset = _original_values_second_mset;
     }
 
-    int size()
+    int size() const
     {
-      return _ta.size() + _tb.size();
+      return _valid_elements.size() + _invalid_elements.size();
     }
 
-    int count(TYPE k)
+    int count(TYPE element_to_count) const
     {
-    return _predicate(k) ? std::count(_ta.begin(), _ta.end(), k):
-                           std::count(_tb.begin(), _tb.end(), k);
+    return _predicate(element_to_count) ? std::count(_valid_elements.begin(), _valid_elements.end(), element_to_count):
+                                          std::count(_invalid_elements.begin(), _invalid_elements.end(), element_to_count);
     }
 
 };
