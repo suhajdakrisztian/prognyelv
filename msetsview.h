@@ -42,6 +42,9 @@ class multisets_predicate_view
         if ( !_predicate(element)) {
           _tb.insert(element);
         }
+        else {
+          _ta.insert(element);
+        }
       }
 
       for (TYPE element : m2) {
@@ -49,21 +52,14 @@ class multisets_predicate_view
         if (_predicate(element)) {
           _ta.insert(element);
         }
-      }
-      for (TYPE element : m1) {
-        if ( _predicate(element)) {
-          _ta.insert(element);
-        }
-      }
-
-      for (TYPE element : m2) {
-        if (!_predicate(element)) {
+        else {
           _tb.insert(element);
         }
       }
-
-      m1 = _ta;
-      m2 = _tb;
+      m1.clear();
+      m2.clear();
+      std::copy(_ta.begin(), _ta.end(), std::inserter(m1, m1.begin()));
+      std::copy(_tb.begin(), _tb.end(), std::inserter(m2, m2.begin()));
     }
 
     multisets_predicate_view(std::multiset<TYPE, Comp>& m1, std::multiset<TYPE, Compp>& m2, PREDICATE p) : _predicate(p)
@@ -76,6 +72,9 @@ class multisets_predicate_view
         if ( !_predicate(element)) {
           _tb.insert(element);
         }
+        else {
+          _ta.insert(element);
+        }
       }
 
       for (TYPE element : m2) {
@@ -83,21 +82,17 @@ class multisets_predicate_view
         if (_predicate(element)) {
           _ta.insert(element);
         }
-      }
-      for (TYPE element : m1) {
-        if ( _predicate(element)) {
-          _ta.insert(element);
-        }
-      }
-
-      for (TYPE element : m2) {
-        if (!_predicate(element)) {
+        else {
           _tb.insert(element);
         }
       }
 
-      m1 = _ta;
-      m2 = _tb;
+      m1.clear();
+      m2.clear();
+
+      std::copy(_ta.begin(), _ta.end(), std::inserter(m1, m1.begin()));
+      std::copy(_tb.begin(), _tb.end(), std::inserter(m2, m2.begin()));
+
     }
     ~multisets_predicate_view()
     {
@@ -112,7 +107,7 @@ class multisets_predicate_view
 
     int count(TYPE k)
     {
-    return _predicate(k) ? std::count(_ta.begin(), _ta.end(), k) :
+    return _predicate(k) ? std::count(_ta.begin(), _ta.end(), k):
                            std::count(_tb.begin(), _tb.end(), k);
     }
 
