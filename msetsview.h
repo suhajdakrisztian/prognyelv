@@ -40,26 +40,25 @@ class multisets_predicate_view
       _original_address_first_mset = &first_input_mset;
       _original_address_second_mset = &second_input_mset;
 
-      for (TYPE element : first_input_mset)
-      {
-        _original_values_first_mset.insert(element);
 
-        if ( !_predicate(element))
-          _invalid_elements.insert(element);
-        else
-          _valid_elements.insert(element);
-      }
+      std::copy(first_input_mset.begin(), first_input_mset.end(), 
+                std::inserter(_original_values_first_mset, _original_values_first_mset.begin()) );
 
-      for (TYPE element : second_input_mset)
-      {
-        _original_values_second_mset.insert(element);
+      std::copy_if(first_input_mset.begin(), first_input_mset.end(), 
+                std::inserter(_valid_elements, _valid_elements.begin()), _predicate );
+      std::copy_if(first_input_mset.begin(), first_input_mset.end(), 
+                std::inserter(_invalid_elements, _invalid_elements.begin()), std::not1(_predicate) );
 
-        if (_predicate(element))
-          _valid_elements.insert(element);
 
-        else
-          _invalid_elements.insert(element);
-      }
+      std::copy(second_input_mset.begin(), second_input_mset.end(),
+                std::inserter(_original_values_second_mset, _original_values_second_mset.begin()) );
+
+      std::copy_if(second_input_mset.begin(), second_input_mset.end(),
+                std::inserter(_valid_elements, _valid_elements.begin()), _predicate );
+      std::copy_if(second_input_mset.begin(), second_input_mset.end(),
+                std::inserter(_invalid_elements, _invalid_elements.begin()), std::not1(_predicate) );
+
+
 
       first_input_mset.clear();
       second_input_mset.clear();
@@ -77,25 +76,24 @@ class multisets_predicate_view
       _original_address_first_mset = &first_input_mset;
       _original_address_second_mset = &second_input_mset;
 
-      for (TYPE element : first_input_mset) 
-      {
-        _original_values_first_mset.insert(element);
 
-        if ( !_predicate(element))
-          _invalid_elements.insert(element);
-        else
-          _valid_elements.insert(element);
-      }
+      std::copy(first_input_mset.begin(), first_input_mset.end(), 
+                std::inserter(_original_values_first_mset, _original_values_first_mset.begin()) );
 
-      for (TYPE element : second_input_mset) 
-      {
-        _original_values_second_mset.insert(element);
+      std::copy_if(first_input_mset.begin(), first_input_mset.end(), 
+                std::inserter(_valid_elements, _valid_elements.begin()), _predicate );
+      std::copy_if(first_input_mset.begin(), first_input_mset.end(), 
+                std::inserter(_invalid_elements, _invalid_elements.begin()), std::not1(_predicate) );
 
-        if (_predicate(element)) 
-          _valid_elements.insert(element);
-        else
-          _invalid_elements.insert(element);
-      }
+
+      std::copy(second_input_mset.begin(), second_input_mset.end(),
+                std::inserter(_original_values_second_mset, _original_values_second_mset.begin()) );
+
+      std::copy_if(second_input_mset.begin(), second_input_mset.end(),
+                std::inserter(_valid_elements, _valid_elements.begin()), _predicate );
+      std::copy_if(second_input_mset.begin(), second_input_mset.end(),
+                std::inserter(_invalid_elements, _invalid_elements.begin()), std::not1(_predicate) );
+
 
       first_input_mset.clear();
       second_input_mset.clear();
@@ -122,7 +120,6 @@ class multisets_predicate_view
     return _predicate(element_to_count) ? std::count(_valid_elements.begin(), _valid_elements.end(), element_to_count):
                                           std::count(_invalid_elements.begin(), _invalid_elements.end(), element_to_count);
     }
-
 };
 
 
