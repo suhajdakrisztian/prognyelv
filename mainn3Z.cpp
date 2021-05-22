@@ -113,18 +113,21 @@ bool check()
   if ( !c || 3 != msa.size() || 1 != msa.count( "C++" ) || max / 2 != mia.size() )
     return false;
 
-/*
+//IDAIG OK
+
   if ( c )
   {
+    //std::cout << "bejott ide" << std::endl;
     multisets_predicate_view<std::string, is_good_language> vs( msa, msb );
     multisets_predicate_view<int, unary_less> vi( mia, mib, unary_less( 2 ) );
 
-    if ( max != vi.size() || 1 != vs.count( "Brainfuck" ) || 2 != vs.count( "C++" ) ||
-         6 != vs.size() || 1 != vi.count( 2 ) )
+    if ( max != vi.size() || 1 != vs.count( "Brainfuck" ) || 2 != vs.count( "C++" ) || 
+        6 != vs.size() || 1 != vi.count( 2 ) )
       return false;
   } else
     return false;
-
+//OK
+/*
   std::multiset<std::string> a;
   std::multiset<std::string, string_size_less> b;
 

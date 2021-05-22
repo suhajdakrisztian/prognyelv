@@ -37,21 +37,31 @@ class multisets_predicate_view
       _original_elements_first = &m1;
       _original_elements_second = &m2;
 
-      for (TYPE element : m1)
-      {
+      for (TYPE element : m1) {
         _a.insert(element);
-        if ( !_predicate(element))
-        {
+        if ( !_predicate(element)) {
           _tb.insert(element);
         }
       }
-      for (TYPE element : m2)
-      {
+
+      for (TYPE element : m2) {
         _b.insert(element);
         if (_predicate(element)) {
           _ta.insert(element);
         }
       }
+      for (TYPE element : m1) {
+        if ( _predicate(element)) {
+          _ta.insert(element);
+        }
+      }
+
+      for (TYPE element : m2) {
+        if (!_predicate(element)) {
+          _tb.insert(element);
+        }
+      }
+
       m1 = _ta;
       m2 = _tb;
     }
@@ -96,10 +106,10 @@ class multisets_predicate_view
     }
 
     int size(){
-      return 0;
+      return _ta.size() + _tb.size();
     }
     int count(TYPE k){
-      return 0;
+      return std::count(_ta.begin(), _ta.end(), k) + std::count(_tb.begin(), _tb.end(), k);
     }
 
 };
