@@ -105,11 +105,15 @@ class multisets_predicate_view
       *_original_elements_second = _b;
     }
 
-    int size(){
+    int size()
+    {
       return _ta.size() + _tb.size();
     }
-    int count(TYPE k){
-      return std::count(_ta.begin(), _ta.end(), k) + std::count(_tb.begin(), _tb.end(), k);
+
+    int count(TYPE k)
+    {
+    return _predicate(k) ? std::count(_ta.begin(), _ta.end(), k) :
+                           std::count(_tb.begin(), _tb.end(), k);
     }
 
 };

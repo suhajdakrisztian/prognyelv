@@ -113,7 +113,7 @@ bool check()
   if ( !c || 3 != msa.size() || 1 != msa.count( "C++" ) || max / 2 != mia.size() )
     return false;
 
-//IDAIG OK
+//OK
 
   if ( c )
   {
@@ -127,7 +127,7 @@ bool check()
   } else
     return false;
 //OK
-/*
+
   std::multiset<std::string> a;
   std::multiset<std::string, string_size_less> b;
 
@@ -149,7 +149,7 @@ bool check()
 
     return 3 == b.size() && 0 == a.count( "Cobol" ) && 1 == b.count( "Haskell" ) && 1 == s.count( 1 );
   }
-  */
+
   return false;
 }
 
